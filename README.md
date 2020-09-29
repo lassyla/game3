@@ -1,8 +1,10 @@
-# (TODO: your game's title)
+# Cat Pat
 
-Author: (TODO: your name)
+Author: Alyssa Lee
 
-Design: (TODO: In two sentences or fewer, describe what is new and interesting about your game.)
+Design: Switch between different hand movements and perform actions to the beat of the music! 
+
+Note: I wanted to make this game more interesting by having the arms be wiggly/become wiggly. My ideas were to use either a shader or a skinned mesh to solve this, but I ran out of time to figure it out :( 
 
 Screen Shot:
 
@@ -12,7 +14,10 @@ How To Play:
 
 (TODO: describe the controls and (if needed) goals/strategy.)
 
-Sources: (TODO: list a source URL for any assets you did not create yourself. Make sure you have a license for the asset.)
+Sources: 
+BG music is "City Sunshine" by Kevin MacLeod, found via [freepd.com](https://freepd.com/upbeat.php). 
+"Cat, Screaming, A" SFX by InspectorJ, found via [freesound.org](https://freesound.org/people/InspectorJ/sounds/415209/)
+
 
 This game was built with [NEST](NEST.md).
 
