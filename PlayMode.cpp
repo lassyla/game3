@@ -44,6 +44,42 @@ Load< Sound::Sample > city_sunshine_sample(LoadTagDefault, []() -> Sound::Sample
 Load< Sound::Sample > pat_bad_sample(LoadTagDefault, []() -> Sound::Sample const * {
 	return new Sound::Sample(data_path("pat_bad.wav"));
 });
+Load< Sound::Sample > pat_good_sample(LoadTagDefault, []() -> Sound::Sample const * {
+	return new Sound::Sample(data_path("pat_good.wav"));
+});
+
+Load< Sound::Sample > poke_bad_sample(LoadTagDefault, []() -> Sound::Sample const * {
+	return new Sound::Sample(data_path("poke_bad.wav"));
+});
+Load< Sound::Sample > poke_good_sample(LoadTagDefault, []() -> Sound::Sample const * {
+	return new Sound::Sample(data_path("poke_good.wav"));
+});
+
+Load< Sound::Sample > punch_bad_sample(LoadTagDefault, []() -> Sound::Sample const * {
+	return new Sound::Sample(data_path("punch_bad.wav"));
+});
+Load< Sound::Sample > punch_good_sample(LoadTagDefault, []() -> Sound::Sample const * {
+	return new Sound::Sample(data_path("punch_good.wav"));
+});
+Load< Sound::Sample > pinch_bad_sample(LoadTagDefault, []() -> Sound::Sample const * {
+	return new Sound::Sample(data_path("pinch_bad.wav"));
+});
+Load< Sound::Sample > pinch_good_sample(LoadTagDefault, []() -> Sound::Sample const * {
+	return new Sound::Sample(data_path("pinch_good.wav"));
+});
+
+Load< Sound::Sample > q_sample(LoadTagDefault, []() -> Sound::Sample const * {
+	return new Sound::Sample(data_path("q.wav"));
+});
+Load< Sound::Sample > w_sample(LoadTagDefault, []() -> Sound::Sample const * {
+	return new Sound::Sample(data_path("w.wav"));
+});
+Load< Sound::Sample > e_sample(LoadTagDefault, []() -> Sound::Sample const * {
+	return new Sound::Sample(data_path("e.wav"));
+});
+Load< Sound::Sample > r_sample(LoadTagDefault, []() -> Sound::Sample const * {
+	return new Sound::Sample(data_path("r.wav"));
+});
 
 PlayMode::PlayMode() : scene(*bopit_scene) {
 	//get pointers to leg for convenience:
@@ -116,23 +152,23 @@ PlayMode::PlayMode() : scene(*bopit_scene) {
 	if (scene.cameras.size() != 1) throw std::runtime_error("Expecting scene to have exactly one camera, but it has " + std::to_string(scene.cameras.size()));
 	camera = &scene.cameras.front();
 	
-	bad_samples[0] = &pat_bad_sample; 
-	bad_samples[1] = &pat_bad_sample; 
+	bad_samples[0] = &punch_bad_sample; 
+	bad_samples[1] = &poke_bad_sample; 
 	bad_samples[2] = &pat_bad_sample; 
-	bad_samples[3] = &pat_bad_sample; 
+	bad_samples[3] = &pinch_bad_sample; 
 	
-	good_samples[0] = &pat_bad_sample; 
-	good_samples[1] = &pat_bad_sample; 
-	good_samples[2] = &pat_bad_sample; 
-	good_samples[3] = &pat_bad_sample; 
+	good_samples[0] = &punch_good_sample; 
+	good_samples[1] = &poke_good_sample; 
+	good_samples[2] = &pat_good_sample; 
+	good_samples[3] = &pinch_good_sample; 
 
-	command_samples[0] = &pat_bad_sample; 
-	command_samples[1] = &pat_bad_sample; 
-	command_samples[2] = &pat_bad_sample; 
-	command_samples[3] = &pat_bad_sample; 
+	command_samples[0] = &q_sample; 
+	command_samples[1] = &w_sample; 
+	command_samples[2] = &e_sample; 
+	command_samples[3] = &r_sample; 
 
 	//start music playing:
-	Sound::play(*city_sunshine_sample, 1.0f, 1.0f);
+	Sound::play(*city_sunshine_sample, 0.0f, 1.0f);
 }
 
 PlayMode::~PlayMode() {
@@ -222,7 +258,7 @@ void PlayMode::update(float elapsed) {
 		if(!game_over) {
 			//calculate scores and display them 
 			std::cout << "\nyou got " << std::to_string(good_count) << " :) faces, " << std::to_string(ok_count) << " :| faces, and " << std::to_string(bad_count) << " :( faces."; 
-			float score = 100.0f * (good_count + ok_count * 0.5f - 0.2f * bad_count) / 25.0f; 
+			float score = 100.0f * (good_count + ok_count * 0.5f - 0.2f * bad_count) / 23.0f; 
 			std::cout << "\nyour score is " << std::to_string(score) << "\n"; 
 			
 			if(score > 90.0f) a_letter->position = letter_position; 
@@ -245,7 +281,7 @@ void PlayMode::update(float elapsed) {
 	time_passed += elapsed; 
 	
 	//new beat 
-	if(beat_time_passed > beat_time) {
+	if(beat_time_passed > beat_time && time_passed < music_time - 4.0f) {
 		num_beats ++; 
 		beat_time_passed = 0; 
 		
@@ -254,6 +290,7 @@ void PlayMode::update(float elapsed) {
 
 			//pick a new command
 			current_command = command(rand() % 4); 
+			Sound::play(*(*(command_samples[current_command])), 0.0f, 2.0f);
 
 			//current_command = poke; 
 			bg->position = hidden_position; 
@@ -263,12 +300,12 @@ void PlayMode::update(float elapsed) {
 	}
 
 	//scale the gizmo according to the beat 
-	if(beat_time_passed <= scale_threshold) {
+	if(time_passed < music_time - 4.0f && beat_time_passed <= scale_threshold) {
 		float scale = 1.0f + scale_amount * (scale_threshold - beat_time_passed);
 		if(num_beats % 2 == 1) base->scale = glm::vec3(scale); 
 		else if(current_command < 4) parts[current_command]->scale = glm::vec3(scale); 
 	}
-	if(beat_time - beat_time_passed <= scale_threshold) {
+	else if(time_passed < music_time - 4.0f && beat_time - beat_time_passed <= scale_threshold) {
 		float scale = 1.0f + scale_amount * (scale_threshold - beat_time + beat_time_passed );
 		if(num_beats % 2 == 0) base->scale = glm::vec3(scale); 
 		else if(current_command < 4) parts[current_command]->scale = glm::vec3(scale); 
@@ -298,12 +335,12 @@ void PlayMode::update(float elapsed) {
 		float angle = atan2(hand_position.x, hand_position.z); 
 		
 		//called once per jab 
-		if(!hit && jab_time_passed >= 0.5f * jab_time) {
+		if(current_command < 4 && !hit && num_beats % 2 == 0 && jab_time_passed >= 0.5f * jab_time) {
 			hit = true; 
-			//remove the background 
-			bg->position = hidden_position; 
-			bg = bgs[4]; 
-			bg->position = bg_position; 
+			// //remove the background 
+			// bg->position = hidden_position; 
+			// bg = bgs[4]; 
+			// bg->position = bg_position; 
 			//correct hand command
 			if(current_hand == current_command) {
 				//find out which area you are jabbing 
@@ -336,18 +373,19 @@ void PlayMode::update(float elapsed) {
 						ok_face->position = hand_position; 
 						ok_count++;
 					}
+					Sound::play(*(*(good_samples[current_command])), 0.0f, 1.0f);
 				}
 				//if you jabbed the wrong area
 				else {
 					bad_face->position = hand_position; 
-					Sound::play(*(*(bad_samples[0])), 1.0f, 1.0f);
+					Sound::play(*(*(bad_samples[current_command])), 0.0f, 1.0f);
 					bad_count++; 
 				}
 			}
 			//if you jabbed with the wrong hand 
 			else {
 				bad_face->position = hand_position; 
-				Sound::play(*(*(bad_samples[0])), 1.0f, 1.0f);
+				Sound::play(*(*(bad_samples[current_command])), 0.0f, 1.0f);
 				bad_count++; 
 			}
 		}
@@ -367,8 +405,8 @@ void PlayMode::draw(glm::uvec2 const &drawable_size) {
 	// TODO: consider using the Light(s) in the scene to do this
 	glUseProgram(lit_color_texture_program->program);
 	glUniform1i(lit_color_texture_program->LIGHT_TYPE_int, 1);
-	glUniform3fv(lit_color_texture_program->LIGHT_DIRECTION_vec3, 1, glm::value_ptr(glm::vec3(0.0f, 0.0f,-1.0f)));
-	glUniform3fv(lit_color_texture_program->LIGHT_ENERGY_vec3, 1, glm::value_ptr(glm::vec3(1.0f, 1.0f, 0.95f)));
+	glUniform3fv(lit_color_texture_program->LIGHT_DIRECTION_vec3, 1, glm::value_ptr(glm::vec3(0.0f, 1.0f,-1.0f)));
+	glUniform3fv(lit_color_texture_program->LIGHT_ENERGY_vec3, 1, glm::value_ptr(glm::vec3(1.1f, 1.1f, 1.1f)));
 	glUseProgram(0);
 
 	glClearColor(0.5f, 0.5f, 0.5f, 1.0f);
@@ -391,12 +429,12 @@ void PlayMode::draw(glm::uvec2 const &drawable_size) {
 		));
 
 		constexpr float H = 0.09f;
-		lines.draw_text("escape ungrabs mouse",
+		lines.draw_text("escape ungrabs mouse. use Q, W, E, R to switch hand poses",
 			glm::vec3(-aspect + 0.1f * H, -1.0 + 0.1f * H, 0.0),
 			glm::vec3(H, 0.0f, 0.0f), glm::vec3(0.0f, H, 0.0f),
 			glm::u8vec4(0x00, 0x00, 0x00, 0x00));
 		float ofs = 2.0f / drawable_size.y;
-		lines.draw_text("escape ungrabs mouse",
+		lines.draw_text("escape ungrabs mouse. use Q, W, E, R to switch hand poses",
 			glm::vec3(-aspect + 0.1f * H + ofs, -1.0 + + 0.1f * H + ofs, 0.0),
 			glm::vec3(H, 0.0f, 0.0f), glm::vec3(0.0f, H, 0.0f),
 			glm::u8vec4(0xff, 0xff, 0xff, 0x00));

@@ -52,7 +52,7 @@ struct PlayMode : Mode {
 	float scale_amount = 0.2f; 
 
 	//how lenient is the scoring
-	float good_threshold = .1f; 
+	float good_threshold = .2f; 
 	//pi 
 	float pi = 3.1415926f;
 
