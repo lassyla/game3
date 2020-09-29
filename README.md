@@ -12,6 +12,7 @@ How To Play:
 Press the Q, W, E, and R keys to switch your hand pose. On the beat, hit the corresponding part of the circle. You get more points for matching the music, and no points for using the wrong pose or hitting the wrong part of the circle. 
 
 Sources: 
+
 BG music is "City Sunshine" by Kevin MacLeod, found via [freepd.com](https://freepd.com/upbeat.php)
 
 "Cat, Screaming, A" SFX by InspectorJ, found via [freesound.org](https://freesound.org/people/InspectorJ/sounds/415209/)
